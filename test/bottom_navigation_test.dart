@@ -5,11 +5,26 @@
 // gestures. You can also use WidgetTester to find child ui.widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive/hive.dart';
 import 'package:manabietodo/main.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
-void main() {
+import '../lib/models/task_model.dart';
+
+void initialiseHive() async {
+  var path = Directory.current.path;
+  Hive
+    ..init(path)
+    ..registerAdapter(TaskModelAdapter());
+
+}
+
+void main() async {
+  initialiseHive() ;
   testWidgets('Bottom navigation bar testing', (WidgetTester tester) async {
     await tester.pumpWidget(MyApp());
 
@@ -24,14 +39,14 @@ void main() {
     final secondTab = find.byKey(Key('todo'));
     await tester.tap(secondTab);
     await tester.pump();
-    final toDoFinder = find.text('You have no todo-task');
+    final toDoFinder = find.text('You have no pending task');
     expect(toDoFinder, findsOneWidget);
 
     // Done tasks tab
     final thirdTab = find.byKey(Key('done-task'));
     await tester.tap(thirdTab);
     await tester.pump();
-    final doneFinder = find.text('You have no done-task');
+    final doneFinder = find.text('You have no complete task');
     expect(doneFinder, findsOneWidget);
   });
 }

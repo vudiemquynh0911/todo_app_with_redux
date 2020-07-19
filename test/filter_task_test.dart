@@ -2,8 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:manabietodo/models/task_model.dart';
 
 void main() {
-  group('Filter tasks complete and pending', () {
-    test('list of pending tasks', () {
+    test('filter tasks', () {
       final tasks = [
         TaskModel(id: 1, content: 'a'),
         TaskModel(id: 2, content: 'b'),
@@ -13,5 +12,4 @@ void main() {
       expect(getPendingTasks(tasks).length, 2);
       expect(getCompleteTasks(tasks).length, 1);
     });
-  });
 }
