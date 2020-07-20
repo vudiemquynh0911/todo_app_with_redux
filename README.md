@@ -5,7 +5,7 @@ A simple Flutter todo application
 # In this project
 
 In this project I used:
-- Local storage : [Hive] (https://pub.dev/packages/hive)
+- Local storage : Hive (https://pub.dev/packages/hive)
 - State management: Redux
 
 # Need to be improved
