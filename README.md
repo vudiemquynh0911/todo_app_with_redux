@@ -11,6 +11,6 @@ In this project I used:
 # Need to be improved
 - Edit/Remove features
 - Generate unique id for each task. In this time, there is no remove feature so I simply generate id based on length of task list
-- UI/UX improvement
+- UI/UX improvement (initial loading indicator, loadmore indicator)
 
 
