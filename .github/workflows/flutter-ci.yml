@@ -18,7 +18,7 @@ jobs:
       #set of different configurations of the virtual environment.
       matrix:
         device:
-         # - "iPhone 8 (13.1)"
+          - "iPhone 8 (13.6)"
           - "iPhone 11 Pro Max (13.6)"
       fail-fast: false
     #if conditional to prevent a job from running
