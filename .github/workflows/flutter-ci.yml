@@ -12,72 +12,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  drive_ios:
-    #creates a build matrix for your jobs
-    strategy:
-      #set of different configurations of the virtual environment.
-      matrix:
-        device:
-          - "iPhone 8 (13.6)"
-          - "iPhone 11 Pro Max (13.6)"
-      fail-fast: false
-    #if conditional to prevent a job from running
-    if: github.event_name != 'pull_request'
-    runs-on: macos-latest
-    #Identifies any jobs that must complete successfully before this job will run.
-    #needs: test
-    steps:
-      - name: List all simulators
-        run: xcrun instruments -s
-      # get UUID  simulator and boot a simulator on mac from  command line
-      - name: Start Simulator
-        run: |
-          UDID=$(
-            xcrun instruments -s |
-            awk \
-              -F ' *[][]' \
-              -v 'device=${{ matrix.device }}' \
-              '$1 == device { print $2 }'
-          )
-          xcrun simctl boot "${UDID:?No Simulator with this name found}"
-      - uses: actions/checkout@v1
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: 'beta'
-      # Run flutter integrate tests
-      - name: Run Flutter tests
-        run: flutter test
-        
-  drive_android:
-    #if conditional to prevent a job from running
-    if: github.event_name != 'pull_request'
-    runs-on: macos-latest
-    #creates a build matrix for your jobs
-    strategy:
-      #set of different configurations of the virtual environment.
-      matrix:
-        api-level: [21, 29]
-        target: [default]
-    steps:
-      - uses: actions/checkout@v1
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: 'beta'
-      - name: Run Flutter Driver tests
-        #GitHub Action for installing, configuring and running Android Emulators (work only Mac OS)
-        #https://github.com/ReactiveCircus/android-emulator-runner
-        uses: reactivecircus/android-emulator-runner@v1
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: x86_64
-          profile: Nexus 6
-          script: flutter test
-          
   build:
     # This job will run on ubuntu virtual machine
     runs-on: macos-latest
-    needs: [drive_ios,drive_android]
     steps:
     
     # Setup Java environment in order to build the Android app.
@@ -110,6 +47,12 @@ jobs:
     # Upload generated apk to the artifacts.
     - uses: actions/upload-artifact@v1
       with:
-        name: release-apk
-        path: build/app/outputs/apk/release/app-release.apk
+        name: debug-apk
+        path: build/app/outputs/apk/release/app-debug.apk
+    - uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
+      with:
+        appId: ${{secrets.FIREBASE_APP_ID}}
+        token: ${{secrets.FIREBASE_TOKEN}}
+        groups: Debug Test
+        file: build/app/outputs/apk/release/app-debug.apk  
 
